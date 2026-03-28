@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>GitHub Leaders · Top Committers by Region</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, sans-serif;
+      background: #f9fafb;
+      color: #111827;
+      line-height: 1.5;
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem;
+    }
+
+    /* header */
+    .hero {
+      text-align: center;
+      margin-bottom: 3rem;
+    }
+
+    .hero h1 {
+      font-size: 2.5rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, #1e293b, #3b82f6);
+      background-clip: text;
+      -webkit-background-clip: text;
+      color: transparent;
+      letter-spacing: -0.02em;
+    }
+
+    .hero p {
+      font-size: 1.125rem;
+      color: #4b5563;
+      margin-top: 0.75rem;
+      max-width: 650px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    /* controls */
+    .controls {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: flex-end;
+      gap: 1rem;
+      justify-content: center;
+      margin-bottom: 2.5rem;
+      background: white;
+      padding: 1.5rem;
+      border-radius: 2rem;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.02), 0 2px 4px rgba(0,0,0,0.05);
+    }
+
+    .control-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+    }
+
+    .control-group label {
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: #6b7280;
+    }
+
+    input, select {
+      padding: 0.75rem 1rem;
+      font-size: 0.95rem;
+      border: 1px solid #e2e8f0;
+      border-radius: 1.5rem;
+      background: #fff;
+      font-family: inherit;
+      transition: all 0.2s ease;
+      width: 220px;
+    }
+
+    input:focus, select:focus {
+      outline: none;
+      border-color: #3b82f6;
+      box-shadow: 0 0 0 3px rgba(59,130,246,0.2);
+    }
+
+    button {
+      background: #1f2937;
+      color: white;
+      border: none;
+      padding: 0.75rem 1.5rem;
+      border-radius: 2rem;
+      font-weight: 500;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: 0.2s;
+      font-family: inherit;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    button:hover {
+      background: #111827;
+      transform: translateY(-1px);
+    }
+
+    /* table wrapper */
+    .table-wrapper {
+      background: white;
+      border-radius: 1.5rem;
+      box-shadow: 0 20px 35px -12px rgba(0,0,0,0.08);
+      overflow-x: auto;
+      transition: all 0.2s;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.9rem;
+    }
+
+    th {
+      text-align: left;
+      padding: 1rem 1.5rem;
+      background-color: #f8fafc;
+      font-weight: 600;
+      color: #1e293b;
+      border-bottom: 1px solid #e9edf2;
+    }
+
+    td {
+      padding: 1rem 1.5rem;
+      border-bottom: 1px solid #f0f2f5;
+      vertical-align: middle;
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    tr:hover {
+      background-color: #fef9e3;
+      transition: 0.1s;
+    }
+
+    .user-cell {
+      display: flex;
+      align-items: center;
+      gap: 0.9rem;
+    }
+
+    .avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 100px;
+      background: #eef2ff;
+      object-fit: cover;
+    }
+
+    .username {
+      font-weight: 600;
+      color: #0f172a;
+      text-decoration: none;
+    }
+
+    .username:hover {
+      color: #3b82f6;
+      text-decoration: underline;
+    }
+
+    .badge-code {
+      background: #f1f5f9;
+      padding: 0.3rem 0.6rem;
+      border-radius: 2rem;
+      font-family: 'Menlo', monospace;
+      font-size: 0.7rem;
+      color: #0f172a;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      transition: 0.1s;
+    }
+
+    .badge-code:hover {
+      background: #e2e8f0;
+    }
+
+    .copy-icon {
+      font-size: 0.8rem;
+      opacity: 0.7;
+    }
+
+    .rank {
+      font-weight: 700;
+      color: #475569;
+      width: 50px;
+    }
+
+    .contributions {
+      font-weight: 600;
+      color: #0f172a;
+      background: #eef2ff;
+      display: inline-block;
+      padding: 0.2rem 0.7rem;
+      border-radius: 2rem;
+      font-size: 0.8rem;
+    }
+
+    .loading {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 4rem;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .spinner {
+      width: 40px;
+      height: 40px;
+      border: 3px solid #e2e8f0;
+      border-top-color: #3b82f6;
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .error-message {
+      background: #fee2e2;
+      color: #991b1b;
+      padding: 1rem;
+      border-radius: 1rem;
+      text-align: center;
+      margin: 2rem 0;
+    }
+
+    footer {
+      text-align: center;
+      margin-top: 3rem;
+      font-size: 0.8rem;
+      color: #6c757d;
+      border-top: 1px solid #e9edf2;
+      padding-top: 2rem;
+    }
+
+    @media (max-width: 760px) {
+      .container { padding: 1rem; }
+      .controls { flex-direction: column; align-items: stretch; }
+      input, select, button { width: 100%; }
+      th, td { padding: 0.8rem 1rem; }
+      .user-cell { gap: 0.6rem; }
+      .avatar { width: 32px; height: 32px; }
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <div class="hero">
+    <h1>📊 GitHub Leaders</h1>
+    <p>Most active committers — by country or worldwide. Real‑time ranking from the open source pulse.</p>
+  </div>
+
+  <div class="controls">
+    <div class="control-group">
+      <label>🌍 Region / Country</label>
+      <input type="text" id="countryInput" placeholder="e.g., Uganda, Kenya, Nigeria" value="">
+    </div>
+    <div class="control-group">
+      <label>📌 Quick pick</label>
+      <select id="quickSelect">
+        <option value="">🌐 Worldwide</option>
+        <option value="uganda">🇺🇬 Uganda</option>
+        <option value="kenya">🇰🇪 Kenya</option>
+        <option value="nigeria">🇳🇬 Nigeria</option>
+        <option value="south-africa">🇿🇦 South Africa</option>
+        <option value="ghana">🇬🇭 Ghana</option>
+        <option value="united-states">🇺🇸 USA</option>
+        <option value="united-kingdom">🇬🇧 UK</option>
+        <option value="india">🇮🇳 India</option>
+        <option value="germany">🇩🇪 Germany</option>
+        <option value="canada">🇨🇦 Canada</option>
+      </select>
+    </div>
+    <button id="loadBtn">⟳ Load leaders</button>
+  </div>
+
+  <div id="tableContainer">
+    <div class="loading">
+      <div class="spinner"></div>
+      <span>Fetching top committers...</span>
+    </div>
+  </div>
+  <footer>
+    Data powered by <strong>committers.top</strong> · Badges & ranking reflect public GitHub activity
+  </footer>
+</div>
+
+<script>
+  (function() {
+    const countryInput = document.getElementById('countryInput');
+    const quickSelect = document.getElementById('quickSelect');
+    const loadBtn = document.getElementById('loadBtn');
+    const tableContainer = document.getElementById('tableContainer');
+
+    function getCountryParam() {
+      const urlParams = new URLSearchParams(window.location.search);
+      return urlParams.get('cn');
+    }
+
+    function updateURLWithoutReload(country) {
+      const url = new URL(window.location.href);
+      if (country && country.trim() !== '') {
+        url.searchParams.set('cn', country);
+      } else {
+        url.searchParams.delete('cn');
+      }
+      window.history.replaceState({}, '', url);
+    }
+
+    function normalizeCountryCode(raw) {
+      if (!raw) return '';
+      let cleaned = raw.trim().toLowerCase();
+      cleaned = cleaned.replace(/\s+/g, '-');
+      return cleaned;
+    }
+
+    function getApiUrl(countryCode) {
+      if (!countryCode) {
+        return 'https://committers.top/worldwide.json';
+      }
+      return `https://committers.top/${countryCode}.json`;
+    }
+
+    async function fetchLeaders(countryRaw) {
+      const countryNorm = normalizeCountryCode(countryRaw);
+      const apiUrl = getApiUrl(countryNorm);
+      try {
+        const response = await fetch(apiUrl);
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        const data = await response.json();
+        return { data, countryUsed: countryNorm };
+      } catch (err) {
+        console.error(err);
+        throw new Error(`Failed to load data for ${countryRaw || 'worldwide'}. Make sure region exists.`);
+      }
+    }
+
+    function renderTable(users, regionCode) {
+      if (!users || !users.length) {
+        tableContainer.innerHTML = `<div class="error-message">⚠️ No committer data found for this region. Try another country.</div>`;
+        return;
+      }
+
+      const isWorldwide = !regionCode || regionCode === '';
+      const displayRegion = isWorldwide ? 'worldwide' : regionCode;
+
+      let html = `<div class="table-wrapper"><table><thead><tr>
+        <th>#</th><th>User</th><th>Contributions</th><th>Badge (copy markdown)</th>
+      </tr></thead><tbody>`;
+
+      for (let i = 0; i < users.length; i++) {
+        const u = users[i];
+        const rank = u.rank || (i + 1);
+        const username = u.username || u.user || u.login;
+        const name = u.name || '';
+        const avatar = u.avatar || `https://github.com/${username}.png?size=40`;
+        const contributions = u.contributions || u.commits || u.total || '—';
+        const profileUrl = `https://github.com/${username}`;
+
+        let badgeMarkdown = '';
+        if (!isWorldwide && regionCode) {
+          badgeMarkdown = `[![committers.top badge](https://user-badge.committers.top/${regionCode}/${username}.svg)](https://user-badge.committers.top/${regionCode}/${username})`;
+        } else {
+          badgeMarkdown = `[![committers.top badge](https://user-badge.committers.top/worldwide/${username}.svg)](https://user-badge.committers.top/worldwide/${username})`;
+        }
+
+        html += `<tr>
+          <td class="rank">${rank}</td>
+          <td>
+            <div class="user-cell">
+              <img class="avatar" src="${avatar}" alt="${username}" loading="lazy" onerror="this.src='https://github.com/identicons/${username}.png'">
+              <div>
+                <a class="username" href="${profileUrl}" target="_blank" rel="noopener">${username}</a>
+                ${name ? `<div style="font-size:0.75rem; color:#6c757d;">${name}</div>` : ''}
+              </div>
+            </div>
+          </td>
+          <td><span class="contributions">${contributions.toLocaleString()}</span></td>
+          <td>
+            <div class="badge-code" data-badge="${badgeMarkdown.replace(/"/g, '&quot;')}">
+              <span style="max-width: 260px; overflow-x: auto; white-space: nowrap;">📋 copy badge</span>
+              <span class="copy-icon">⎘</span>
+            </div>
+          </td>
+        </tr>`;
+      }
+
+      html += `</tbody></table></div>`;
+      tableContainer.innerHTML = html;
+
+      document.querySelectorAll('.badge-code').forEach(el => {
+        el.addEventListener('click', async (e) => {
+          e.stopPropagation();
+          const rawBadge = el.getAttribute('data-badge');
+          if (!rawBadge) return;
+          try {
+            await navigator.clipboard.writeText(rawBadge);
+            const originalText = el.innerHTML;
+            el.innerHTML = `<span>✓ Copied!</span>`;
+            setTimeout(() => {
+              el.innerHTML = originalText;
+            }, 1500);
+          } catch (err) {
+            alert('Manual copy: ' + rawBadge);
+          }
+        });
+      });
+    }
+
+    function showLoading() {
+      tableContainer.innerHTML = `<div class="loading"><div class="spinner"></div><span>Loading committers...</span></div>`;
+    }
+
+    function showError(msg) {
+      tableContainer.innerHTML = `<div class="error-message">❌ ${msg}</div>`;
+    }
+
+    async function loadAndRender(countryValue) {
+      showLoading();
+      const normalized = normalizeCountryCode(countryValue);
+      updateURLWithoutReload(countryValue);
+      try {
+        const { data, countryUsed } = await fetchLeaders(countryValue);
+        let users = Array.isArray(data) ? data : (data.users || data.items || []);
+        if (!users.length && data && typeof data === 'object') {
+          const possibleKeys = ['ranking', 'top', 'committers', 'list'];
+          for (let key of possibleKeys) {
+            if (Array.isArray(data[key])) { users = data[key]; break; }
+          }
+        }
+        if (!users.length) throw new Error('Empty dataset from server.');
+        renderTable(users, countryUsed);
+      } catch (err) {
+        showError(err.message || 'Could not load ranking. Please verify region name (e.g., uganda, kenya).');
+      }
+    }
+
+    function syncInputsFromCountry(countryStr) {
+      const val = countryStr || '';
+      countryInput.value = val;
+      const normalizedLower = normalizeCountryCode(val);
+      const quickOption = Array.from(quickSelect.options).find(opt => opt.value === normalizedLower);
+      if (quickOption) quickSelect.value = normalizedLower;
+      else quickSelect.value = '';
+    }
+
+    function handleLoad() {
+      let rawCountry = countryInput.value.trim();
+      if (!rawCountry && quickSelect.value) rawCountry = quickSelect.value;
+      loadAndRender(rawCountry);
+    }
+
+    function initFromUrl() {
+      const urlCountry = getCountryParam();
+      if (urlCountry !== null && urlCountry !== undefined) {
+        const decoded = decodeURIComponent(urlCountry);
+        syncInputsFromCountry(decoded);
+        loadAndRender(decoded);
+      } else {
+        loadAndRender('');
+      }
+    }
+
+    loadBtn.addEventListener('click', () => {
+      const raw = countryInput.value.trim() || quickSelect.value;
+      syncInputsFromCountry(raw);
+      loadAndRender(raw);
+    });
+
+    quickSelect.addEventListener('change', () => {
+      const selected = quickSelect.value;
+      if (selected) {
+        countryInput.value = selected;
+        loadAndRender(selected);
+      } else {
+        if (countryInput.value.trim() === '') loadAndRender('');
+        else loadAndRender(countryInput.value.trim());
+      }
+    });
+
+    countryInput.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        handleLoad();
+      }
+    });
+
+    initFromUrl();
+  })();
+</script>
+</body>
+</html>
